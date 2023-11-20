@@ -8,16 +8,16 @@ secure = false
 
 # If set requires all API calls to have accessToken query argument with that value
 # http://localhost:8080/users?accessToken=somesecretvalue
-#accessToken="somesecretvalue"
+accessToken="ARMA_DUMMY_TOKEN"
 
 [accessControl]
 # If true then require a valid access token to perform API calls
 # If a client provides a token then it is validated even if using a token is not required
-enabled = false
+enabled = true
 
 # Secret for HMAC
 # Changing this value invalidates all tokens
-secret = "a secret cat"
+secret = "ARMA_DUMMY_HMAC"
 
 # Generated access token TTL in seconds. Token TTL gets extended by this value every time the token is used. Defaults to 14 days
 #tokenTTL=1209600

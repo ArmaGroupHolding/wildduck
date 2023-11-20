@@ -285,8 +285,8 @@ server.use(async (req, res) => {
     if (config.api.accessControl.enabled || accessToken) {
         tokenRequired = true;
 
-        if(config.api.oidc.enabled){
-            let valid = true;
+        if(accessToken && config.api.oidc.enabled){
+            let valid = await oidcHandler.verify(accessToken);
             // TODO jwt validate
             if(valid){
                 req.role = "";
@@ -548,6 +548,9 @@ module.exports = done => {
     });
 
     oidcHandler = new OIDCHandler({
+        database: db.database,
+        users: db.users,
+        redis: db.redis,
         loggelf: message => loggelf(message)
     });
 

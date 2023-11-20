@@ -28,7 +28,7 @@ maxConnections = 15
 disableRetention = false
 
 # If true, then disables STARTTLS support
-disableSTARTTLS = false
+disableSTARTTLS = true
 
 # If true, then advertises COMPRESS=DEFLATE capability
 enableCompression = false
