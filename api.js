@@ -47,16 +47,20 @@ const dkimRoutes = require('./lib/api/dkim');
 const certsRoutes = require('./lib/api/certs');
 const webhooksRoutes = require('./lib/api/webhooks');
 const settingsRoutes = require('./lib/api/settings');
+const OIDCHandler = require('./lib/oidc-handler');
 const { SettingsHandler } = require('./lib/settings-handler');
+
 
 let userHandler;
 let mailboxHandler;
 let messageHandler;
 let storageHandler;
 let auditHandler;
+let oidcHandler;
 let settingsHandler;
 let notifier;
 let loggelf;
+
 
 const serverOptions = {
     name: 'WildDuck API',
@@ -280,7 +284,20 @@ server.use(async (req, res) => {
 
     if (config.api.accessControl.enabled || accessToken) {
         tokenRequired = true;
-        if (accessToken && accessToken.length === 40 && /^[a-fA-F0-9]{40}$/.test(accessToken)) {
+
+        if(config.api.oidc.enabled){
+            let valid = true;
+            // TODO jwt validate
+            if(valid){
+                req.role = "";
+                req.user = "sub";
+                req.accessToken = undefined;
+            }
+            else{
+                return fail();
+            }
+    
+        } else if (accessToken && accessToken.length === 40 && /^[a-fA-F0-9]{40}$/.test(accessToken)) {
             let tokenData;
             let tokenHash = crypto.createHash('sha256').update(accessToken).digest('hex');
 
@@ -527,6 +544,10 @@ module.exports = done => {
         users: db.users,
         gridfs: db.gridfs,
         bucket: 'audit',
+        loggelf: message => loggelf(message)
+    });
+
+    oidcHandler = new OIDCHandler({
         loggelf: message => loggelf(message)
     });
 

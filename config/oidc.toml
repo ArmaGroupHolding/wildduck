@@ -1,0 +1,5 @@
+# If enabled then WildDuck use JWT token for authentication
+enabled=false
+url=""
+realm=""
+wellknown=""
