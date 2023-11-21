@@ -80,6 +80,9 @@ connection = "lan"
 [acme]
 # @include "acme.toml"
 
+[oidc]
+# @include "oidc.toml"
+
 [certs]
 # Encrypt stored TLS private keys with the following password (disabled by default):
 #secret="a secret cat"

@@ -1,5 +1,19 @@
 # If enabled then WildDuck use JWT token for authentication
-enabled=false
+enabled = true
 url=""
 realm=""
 wellknown=""
+cache=10
+
+
+ssokey = """
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtpiwKhz4ffUU9I4FAv
+Pm3W/pL2loVhh2t8qMSMWY/ilBTVtl0w5iLefVUjIJcq9VeBwqmGugI2QFSBCt
+jOCpd1OBXcKiSXPHFpB6e0cwVLqRzW9hoqmq5KTVRQoYe59UXXX+7yL3G94KLN
+YUusHJ3m8Bm4tOb4xk6TtnXd8BBzuqW1iycrTBR5z5j3d1SxQDm9eACfEjGY9O
+JWVxCRHMrgk+NYMwso41YQKY8k23VEvgGeJf1ALe40zaInoSaSYULFxOpu0uPA
+/MoUW99tlM9PaOafKAp/vj03japVEuhagXlluLlBTt7nQmTldQ67LFYg/9hOqF
+ZTRQ3l8fi5FyeQIDAQAB
+-----END PUBLIC KEY-----
+"""

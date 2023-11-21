@@ -221,7 +221,7 @@ server.get(
 // Disable GZIP as it does not work with stream.pipe(res)
 //server.use(restify.plugins.gzipResponse());
 
-server.use(async (req, res) => {
+server.use(async (req) => {
     if (['public_get', 'public_post', 'acmeToken'].includes(req.route.name)) {
         // skip token check for public pages
         return;
@@ -285,16 +285,27 @@ server.use(async (req, res) => {
     if (config.api.accessControl.enabled || accessToken) {
         tokenRequired = true;
 
-        if(accessToken && config.api.oidc.enabled){
-            let valid = await oidcHandler.verify(accessToken);
-            // TODO jwt validate
-            if(valid){
-                req.role = "";
-                req.user = "sub";
-                req.accessToken = undefined;
-            }
-            else{
-                return fail();
+        if(accessToken && config.oidc.enabled){
+            try {
+                let valid = await oidcHandler.verify(accessToken);
+                // TODO jwt validate
+                if(valid){
+                    if(valid.realm_access.roles.includes('super-admin')){
+                        req.role='root'
+                    }else{
+                        req.role='user'
+                    }
+                    req.user = valid.sub;
+                    req.accessToken = undefined;
+
+                    //pass
+                    return;
+                }
+                else{
+                    return fail();
+                }
+            } catch (error) {
+                console.log(error)
             }
     
         } else if (accessToken && accessToken.length === 40 && /^[a-fA-F0-9]{40}$/.test(accessToken)) {
