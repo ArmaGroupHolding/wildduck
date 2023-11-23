@@ -48,6 +48,7 @@ const certsRoutes = require('./lib/api/certs');
 const webhooksRoutes = require('./lib/api/webhooks');
 const settingsRoutes = require('./lib/api/settings');
 const OIDCHandler = require('./lib/oidc-handler');
+const resolveHandler = require('./lib/handlers/on-resolveuser');
 const { SettingsHandler } = require('./lib/settings-handler');
 
 
@@ -263,6 +264,16 @@ server.use(async (req) => {
         throw error;
     };
 
+    let expired = () => {
+        let error = new errors.UnauthorizedError(
+            {
+                code:'TokenExpried'
+            },
+            'Token was expired. Renew the token'
+        )
+        throw error;
+    }
+
     req.validate = permission => {
         if (!permission.granted) {
             let err = new Error('Not enough privileges');
@@ -297,7 +308,21 @@ server.use(async (req) => {
                     }
                     req.user = valid.sub;
                     req.accessToken = undefined;
-
+                    if(valid.mid){
+                        req.params.user = valid.mid
+                    }
+                    else{
+                        let userData = await resolveHandler(valid.email).catch(
+                            err=> {
+                                return err;
+                            }
+                        )
+                        req.params.user = userData._id.toString()
+                    }
+                    
+                    // if (req.params && req.params.user === 'me' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(valid.sub)) {
+                    //     req.params.user = valid.sub;
+                    // }
                     //pass
                     return;
                 }
@@ -305,6 +330,10 @@ server.use(async (req) => {
                     return fail();
                 }
             } catch (error) {
+                if(error.code === "FAST_JWT_EXPIRED")
+                {
+                    return expired();
+                }
                 console.log(error)
             }
     
