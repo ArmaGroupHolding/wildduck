@@ -308,6 +308,7 @@ server.use(async (req) => {
                     }
                     req.user = valid.sub;
                     req.accessToken = undefined;
+                    //TODO Admin hesabı bütün kullanıcılara müdahele edebilmeli..
                     if(valid.mid){
                         req.params.user = valid.mid
                     }
