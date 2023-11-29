@@ -306,11 +306,10 @@ server.use(async (req) => {
                     }else{
                         req.role='user'
                     }
-                    req.user = valid.sub;
-                    req.accessToken = undefined;
                     //TODO Admin hesabı bütün kullanıcılara müdahele edebilmeli..
                     if(valid.mid){
                         req.params.user = valid.mid
+                        req.user = valid.mid
                     }
                     else{
                         let userData = await resolveHandler(valid.email).catch(
@@ -319,6 +318,8 @@ server.use(async (req) => {
                             }
                         )
                         req.params.user = userData._id.toString()
+                        req.user = req.params.user;
+                        req.accessToken = undefined;
                     }
                     
                     // if (req.params && req.params.user === 'me' && /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(valid.sub)) {
